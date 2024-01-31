@@ -1,0 +1,507 @@
+openapi: 3.0.0
+info:
+  title: ayykori-ecom
+  contact: {}
+  version: '1.0'
+servers:
+- url: https://ayykori-ecom.onrender.com/api/v1
+  variables: {}
+paths:
+  /register:
+    post:
+      tags:
+      - Auth
+      summary: registration
+      operationId: registration
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/registrationrequest'
+              - example:
+                  name: chaudhuree
+                  email: chaudhuree@gmail.com
+                  password: '111111'
+            example:
+              name: chaudhuree
+              email: chaudhuree@gmail.com
+              password: '111111'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /login:
+    post:
+      tags:
+      - Auth
+      summary: login
+      operationId: login
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/loginrequest'
+              - example:
+                  email: chaudhuree@gmail.com
+                  password: '111111'
+            example:
+              email: chaudhuree@gmail.com
+              password: '111111'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /login-check:
+    get:
+      tags:
+      - Ayykori
+      summary: logincheck
+      operationId: logincheck
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /create-product:
+    post:
+      tags:
+      - Ayykori
+      summary: createProduct
+      operationId: createProduct
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/createProductRequest'
+              - example:
+                  productName: apple watch
+                  price: 100
+                  availableQuantity: 48
+            example:
+              productName: apple watch
+              price: 100
+              availableQuantity: 48
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /all-products:
+    get:
+      tags:
+      - Ayykori
+      summary: getAllProducts
+      operationId: getAllProducts
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /product/{id}:
+    get:
+      tags:
+      - Ayykori
+      summary: singelProduct
+      operationId: singelProduct
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 65ba24e55637c4e66d1b24af
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    delete:
+      tags:
+      - Ayykori
+      summary: deleteProduct
+      operationId: deleteProduct
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 65ba24e55637c4e66d1b24af
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+    put:
+      tags:
+      - Ayykori
+      summary: updateProduct
+      operationId: updateProduct
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 65ba24e55637c4e66d1b24af
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/updateProductRequest'
+              - example:
+                  productName: apple watch ⌚
+                  price: 100
+                  availableQuantity: 48
+            example:
+              productName: apple watch ⌚
+              price: 100
+              availableQuantity: 48
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /order:
+    post:
+      tags:
+      - Ayykori
+      summary: createOrder
+      operationId: createOrder
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/createOrderRequest'
+              - example:
+                  client: 65ba08b61345395d76bebb0a
+                  products:
+                  - productId: 65ba2623622839a5ee198eda
+                    quantity: 4
+                  address: uttara,dakkhinkhan
+                  provider: Sundarban
+            example:
+              client: 65ba08b61345395d76bebb0a
+              products:
+              - productId: 65ba2623622839a5ee198eda
+                quantity: 4
+              address: uttara,dakkhinkhan
+              provider: Sundarban
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /all-orders:
+    get:
+      tags:
+      - Ayykori
+      summary: getAllOrders
+      operationId: getAllOrders
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /order/{id}:
+    put:
+      tags:
+      - Ayykori
+      summary: updateOrder
+      operationId: updateOrder
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 65ba4015a6eab4e5302ec1d0
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/updateOrderRequest'
+              - example:
+                  status: cancelled
+            example:
+              status: cancelled
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+    get:
+      tags:
+      - Ayykori
+      summary: getSingleOrder
+      operationId: getSingleOrder
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 65ba4773e5db9d9cc5f2c9db
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /payment/{id}:
+    put:
+      tags:
+      - Ayykori
+      summary: updatePaymentStatus
+      operationId: updatePaymentStatus
+      parameters:
+      - name: id
+        in: path
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 65ba63b68d408d278145d0eb
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/updatePaymentStatusRequest'
+              - example:
+                  status: refunded
+            example:
+              status: refunded
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+components:
+  schemas:
+    registrationrequest:
+      title: registrationrequest
+      required:
+      - name
+      - email
+      - password
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        name: chaudhuree
+        email: chaudhuree@gmail.com
+        password: '111111'
+    loginrequest:
+      title: loginrequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: chaudhuree@gmail.com
+        password: '111111'
+    createProductRequest:
+      title: createProductRequest
+      required:
+      - productName
+      - price
+      - availableQuantity
+      type: object
+      properties:
+        productName:
+          type: string
+        price:
+          type: integer
+          format: int32
+        availableQuantity:
+          type: integer
+          format: int32
+      example:
+        productName: apple watch
+        price: 100
+        availableQuantity: 48
+    deleteProductRequest:
+      title: deleteProductRequest
+      required:
+      - productName
+      - price
+      - availableQuantity
+      type: object
+      properties:
+        productName:
+          type: string
+        price:
+          type: integer
+          format: int32
+        availableQuantity:
+          type: integer
+          format: int32
+      example:
+        productName: apple watch
+        price: 100
+        availableQuantity: 48
+    updateProductRequest:
+      title: updateProductRequest
+      required:
+      - productName
+      - price
+      - availableQuantity
+      type: object
+      properties:
+        productName:
+          type: string
+        price:
+          type: integer
+          format: int32
+        availableQuantity:
+          type: integer
+          format: int32
+      example:
+        productName: apple watch ⌚
+        price: 100
+        availableQuantity: 48
+    createOrderRequest:
+      title: createOrderRequest
+      required:
+      - client
+      - products
+      - address
+      - provider
+      type: object
+      properties:
+        client:
+          type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+          description: ''
+        address:
+          type: string
+        provider:
+          type: string
+      example:
+        client: 65ba08b61345395d76bebb0a
+        products:
+        - productId: 65ba2623622839a5ee198eda
+          quantity: 4
+        address: uttara,dakkhinkhan
+        provider: Sundarban
+    Product:
+      title: Product
+      required:
+      - productId
+      - quantity
+      type: object
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+      example:
+        productId: 65ba2623622839a5ee198eda
+        quantity: 4
+    updateOrderRequest:
+      title: updateOrderRequest
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          type: string
+      example:
+        status: cancelled
+    updatePaymentStatusRequest:
+      title: updatePaymentStatusRequest
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          type: string
+      example:
+        status: refunded
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+security: []
+tags:
+
+- name: Auth
+  description: ''
+- name: Ayykori
+  description: ''
