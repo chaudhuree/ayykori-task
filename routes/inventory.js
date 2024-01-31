@@ -15,8 +15,8 @@ const {
 }= require("../controllers/inventory.js");
 
 router.post("/create-product", authenticated, createProduct);
-router.get("/all-products", authenticated, getAllProducts); 
-router.get("/product/:id", authenticated, getProduct);
+router.get("/all-products", getAllProducts); 
+router.get("/product/:id", getProduct);
 router.delete("/product/:id", authenticated, deleteProduct);
 router.put("/product/:id", authenticated, updateProduct);
 
