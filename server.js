@@ -5,6 +5,7 @@ require('express-async-errors'); //no need any try catch for this package
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+// const scheduleTask = require('./utils/scheduler');
 
 // let globalRequestCount = 0;
 // // global counter middleware
@@ -12,6 +13,10 @@ const morgan = require('morgan');
 //   globalRequestCount++;
 //   next();
 // }
+// // Reset the global counter every minute
+// scheduleTask('1m', () => {
+//   globalRequestCount = 0;
+// });
 // setInterval(() => {
 //   globalRequestCount = 0;
 // }, 60 * 1000); // 1 minute
@@ -27,6 +32,11 @@ app.use(
   rateLimiter({
     windowMs:  60 * 1000, // 1 minute
     max: 100, // limit each IP to 10 requests per windowMs
+    handler: (req, res) => {
+      // note: if user is loggedin then show the coun value from db
+      // show the global request count value
+      res.status(429).json({ error: 'Too Many Requests,Try Again After Some Time' });
+    },
   })
 );
 app.use(express.json());
@@ -53,6 +63,7 @@ app.get('/', (req, res) => {
 
 //db connection
 const connectDB = require('./db/connect');
+const scheduleTask = require("./utils/scheduler");
 
 
 //if no route found
