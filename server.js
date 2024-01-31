@@ -6,6 +6,16 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 
+// let globalRequestCount = 0;
+// // global counter middleware
+// const globalRequestCounter= (req, res, next) => {
+//   globalRequestCount++;
+//   next();
+// }
+// setInterval(() => {
+//   globalRequestCount = 0;
+// }, 60 * 1000); // 1 minute
+
 // extra security packages
 const helmet = require('helmet');
 const cors = require('cors');
@@ -29,6 +39,9 @@ app.use(helmet({crossOriginResourcePolicy: false}))
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
+
+// globalRequestCounter middleware
+// app.use(globalRequestCounter);
 
 // routes middleware
 readdirSync("./routes").map(r => app.use("/api/v1", require(`./routes/${r}`))) 

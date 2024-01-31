@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const { UnauthenticatedError } = require('../errors')
 
 exports.authenticated = async (req, res, next) => {
+  
   // check header
   const authHeader = req.headers.authorization //in header.authorization we will get token
   if (!authHeader || !authHeader.startsWith('Bearer')) {
