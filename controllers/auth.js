@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const User = require('../models/User')
-const RequestCount = require("../models/RequestCount");
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, UnauthenticatedError } = require('../errors')
 
@@ -24,9 +23,7 @@ exports.register = async (req, res) => {
   }
   const user = await User.create({ ...req.body })
   const token = user.createJWT() //generate token by using user model method
-  // delete previous token from RequestCount and save new token to the database
-  const deleteRequestCount = await RequestCount.deleteMany();
-  const requestCount = await RequestCount.create({ API: token, count: 0 });
+
   // send response
   res.status(StatusCodes.CREATED).json({ user: { name: user.name, email: user.email, role: user.role, address: user.address }, token })
 };
@@ -52,9 +49,7 @@ exports.login = async (req, res) => {
   }
   // if password is correct then we will generate token
   const token = user.createJWT() //method from user model,in token it will have user id and name
-  // delete previous token from RequestCount and save new token to the database
-  const deleteRequestCount = await RequestCount.deleteMany();
-  const requestCount = await RequestCount.create({ API: token, count: 0 });
+
   res.status(StatusCodes.OK).json({ user: { name: user.name, email: user.email, role: user.role, address: user.address }, token })
 }
 
