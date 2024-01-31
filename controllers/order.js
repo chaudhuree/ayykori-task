@@ -2,13 +2,14 @@ const mongoose = require("mongoose");
 const Inventory = require("../models/Inventory.js");
 const Order = require("../models/Order.js");
 const Payment = require("../models/Payment.js");
+const Shipment = require("../models/Shipment.js");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
 
 // create order
 exports.createOrder = async (req, res) => {
   const client = req.user._id;
-  const { products } = req.body;
+  const { products,address,provider } = req.body;
   // calculate total amount
   let totalAmount = 0;
   for (let i = 0; i < products.length; i++) {
@@ -66,11 +67,13 @@ exports.createOrder = async (req, res) => {
       [{ order: order[0]._id, amount: totalAmount, status: "completed" }],
       { session }
     );
+    // create shipment
+    const shipment = await Shipment.create([{ address,provider,order: order[0]._id }],{session});
 
     // Update order with payment id and status
     const updatedOrder = await Order.findByIdAndUpdate(
       order[0]._id,
-      { payment: payment[0]._id, status: "confirmed" },
+      { payment: payment[0]._id,shipment:shipment[0]._id, status: "confirmed" },
       { new: true, runValidators: true, session }
     );
 
@@ -90,7 +93,8 @@ exports.getAllOrders = async (req, res) => {
   const orders = await Order.find({})
     .populate("client")
     .populate("products.productId")
-    .populate("payment");
+    .populate("payment")
+    .populate("shipment");
   res.status(StatusCodes.OK).json({ orders });
 };
 
@@ -100,7 +104,8 @@ exports.getOrder = async (req, res) => {
   const order = await Order.findById(id)
     .populate("client")
     .populate("products.productId")
-    .populate("payment");
+    .populate("payment")
+    .populate("shipment");
   if (!order) {
     throw new BadRequestError("Order not found");
   }
@@ -170,6 +175,66 @@ exports.updateOrder = async (req, res) => {
   res.status(StatusCodes.OK).json({ order });
 };
 
+// update payment status
+exports.updatePaymentStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  if (!status) {
+    throw new BadRequestError("Please provide all the fields");
+  }
+  // if payment status is refunded then update order status and update product quantity
+  if(status === "refunded"){
+    const payment = await Payment.findById(id);
+    if (!payment) {
+      throw new BadRequestError("Payment not found");
+    }
+    const order = await Order.findById(payment.order);
+    if (!order) {
+      throw new BadRequestError("Order not found");
+    }
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      // Update order status
+      const updatedOrder = await Order.findByIdAndUpdate(
+        order._id,
+        { status: "cancelled" },
+        { new: true, runValidators: true, session }
+      );
+      // Update payment status
+      const updatedPayment = await Payment.findByIdAndUpdate(
+        id,
+        { status },
+        { new: true, runValidators: true, session }
+      );
+      // Update product quantity
+      for (let i = 0; i < updatedOrder.products.length; i++) {
+        let product = await Inventory.findById(
+          updatedOrder.products[i].productId
+        ).session(session);
+        // Update product quantities
+        product.availableQuantity += updatedOrder.products[i].quantity;
+        await product.save();
+      }
+      await session.commitTransaction();
+      session.endSession();
+      res.status(StatusCodes.OK).json({ updatedPayment });
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw error;
+    }
+  }
+  const payment = await Payment.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true, runValidators: true }
+  );
+  if (!payment) {
+    throw new BadRequestError("Payment not found");
+  }
+  res.status(StatusCodes.OK).json({ payment });
+};
 /*
 order workflow:
 - when customer place an order it will first check the avaibility of the product

@@ -33,6 +33,10 @@ const OrderSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Payment",
     },
+    shipment: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Shipment",
+    },
   },
   { timestamps: true, versionKey: false }
 );
