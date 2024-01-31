@@ -17,10 +17,11 @@ const {
   getAllUsers,
   updateRole,
 } =require("../controllers/auth.js");
+const { requestCounter } = require("../middleware/request-counter");
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/login-check", authenticated, isLoginCheck);
+router.get("/login-check", authenticated,requestCounter, isLoginCheck);
 router.get("/admin-check", authenticated, admin,isAdminCheck);
 
 //logged in but if test user then can't update profile
