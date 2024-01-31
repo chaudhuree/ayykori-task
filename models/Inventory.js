@@ -13,7 +13,7 @@ const InventorySchema = new mongoose.Schema(
     availableQuantity: {
       type: Number,
       required: [true, "quantity is required"],
-    },
+    }
   },
   { timestamps: true, versionKey: false }
 );
